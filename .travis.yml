@@ -37,6 +37,7 @@ env:
   matrix:
     - TRAVIS_FLAVOR=default
     - TRAVIS_FLAVOR=snmpwalk
+    - TRAVIS_FLAVOR=traefik FLAVOR_VERSION=latest
     # END OF TRAVIS MATRIX
 
 before_install:
