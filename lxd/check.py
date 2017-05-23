@@ -14,7 +14,11 @@ class LXDCheck(AgentCheck):
     stats = '/1.0/containers/%s/state'
 
     def check(self, instance):
-        pass
+        containers = self.get_containers()
+        for container in containers:
+            self.get_container_statistics(container)
+            self.gauge('lxd.%s.processes' % str(container),
+                       self.statistics[container]['processes'])
 
     def _connect_local_client(self):
         try:
