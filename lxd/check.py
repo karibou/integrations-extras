@@ -13,6 +13,7 @@ class LXDCheck(AgentCheck):
     containers = '/1.0/containers'
     state = '/1.0/containers/%s/state'
     m_metrics = {}
+    net_metrics = {}
 
     def check(self, instance):
         containers = self.get_containers()
@@ -20,6 +21,7 @@ class LXDCheck(AgentCheck):
             self.get_container_statistics(container)
             self.send_processes_statistics(container)
             self.send_memory_statistics(container)
+            self.send_network_statistics(container)
 
     def _connect_local_client(self):
         try:
@@ -72,6 +74,23 @@ class LXDCheck(AgentCheck):
                            self.stats[containr]['memory']
                                      [self.m_metrics[metric]])
 
+    def send_network_statistics(self, containr):
+            self.net_metrics = {
+                'bytes_rcvd': 'bytes_received',
+                'bytes_sent': 'bytes_sent',
+                'packets_in': 'packets_received',
+                'packets_out': 'packets_sent',
+            }
+            nics = self.stats[containr]['network'].keys()
+            if 'excluded_ifaces' in self.instances[0].keys():
+                for unwanted_nic in self.instances[0]['excluded_ifaces']:
+                    nics.remove(unicode(unwanted_nic))
+            for nic in nics:
+                for metric in self.net_metrics.keys():
+                    self.rate('lxd.%s.net.%s' % (str(containr), metric),
+                              self.stats[containr]['network'][nic]['counters']
+                              [self.net_metrics[metric]], device_name=nic)
+
 
 if __name__ == '__main__':
     check, instances = LXDCheck.from_yaml('/etc/dd-agent/conf.d/lxd.yaml')
@@ -80,3 +99,4 @@ if __name__ == '__main__':
         for container in containers:
             check.get_container_statistics(container)
             check.send_processes_statistics(container)
+            check.send_network_statistics(container)
