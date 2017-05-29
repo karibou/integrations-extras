@@ -17,8 +17,7 @@ class LXDCheck(AgentCheck):
         containers = self.get_containers()
         for container in containers:
             self.get_container_statistics(container)
-            self.gauge('lxd.%s.processes' % str(container),
-                       self.stats[container]['processes'])
+            self.send_processes_statistics(container)
 
     def _connect_local_client(self):
         try:
@@ -55,9 +54,13 @@ class LXDCheck(AgentCheck):
             self.stats[containr] = self._query_lxd(self.state % containr)
             return self.stats
 
+    def send_processes_statistics(self, containr):
+        self.gauge('lxd.%s.processes' % str(containr),
+            self.stats[containr]['processes'])
 
 if __name__ == '__main__':
     check, instances = LXDCheck.from_yaml('/etc/dd-agent/conf.d/lxd.yaml')
     containers = check.get_containers()
     if containers:
-        check.gauge('lxd.containers', containers, tags=['containers'])
+        for container in containers:
+            check.send_processes_statistics(container)
