@@ -8,17 +8,17 @@ from checks import AgentCheck
 
 class LXDCheck(AgentCheck):
     lxd_api = None
-    statistics = {}
+    stats = {}
     baseURL = 'http+unix://' + urllib.quote_plus('/var/lib/lxd/unix.socket')
     containers = '/1.0/containers'
-    stats = '/1.0/containers/%s/state'
+    state = '/1.0/containers/%s/state'
 
     def check(self, instance):
         containers = self.get_containers()
         for container in containers:
             self.get_container_statistics(container)
             self.gauge('lxd.%s.processes' % str(container),
-                       self.statistics[container]['processes'])
+                       self.stats[container]['processes'])
 
     def _connect_local_client(self):
         try:
@@ -52,8 +52,8 @@ class LXDCheck(AgentCheck):
 
     def get_container_statistics(self, containr):
         if containr:
-            self.statistics[containr] = self._query_lxd(self.stats % containr)
-            return self.statistics
+            self.stats[containr] = self._query_lxd(self.state % containr)
+            return self.stats
 
 
 if __name__ == '__main__':
