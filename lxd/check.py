@@ -12,12 +12,14 @@ class LXDCheck(AgentCheck):
     baseURL = 'http+unix://' + urllib.quote_plus('/var/lib/lxd/unix.socket')
     containers = '/1.0/containers'
     state = '/1.0/containers/%s/state'
+    m_metrics = {}
 
     def check(self, instance):
         containers = self.get_containers()
         for container in containers:
             self.get_container_statistics(container)
             self.send_processes_statistics(container)
+            self.send_memory_statistics(container)
 
     def _connect_local_client(self):
         try:
@@ -56,11 +58,25 @@ class LXDCheck(AgentCheck):
 
     def send_processes_statistics(self, containr):
         self.gauge('lxd.%s.processes' % str(containr),
-            self.stats[containr]['processes'])
+                   self.stats[containr]['processes'])
+
+    def send_memory_statistics(self, containr):
+            self.m_metrics = {
+                'usage': 'usage',
+                'usage_peak': 'usage_peak',
+                'swap_usage': 'swap_usage',
+                'swap_usage_peak': 'swap_usage_peak',
+            }
+            for metric in self.m_metrics.keys():
+                self.gauge('lxd.%s.memory.%s' % (str(containr), metric),
+                           self.stats[containr]['memory']
+                                     [self.m_metrics[metric]])
+
 
 if __name__ == '__main__':
     check, instances = LXDCheck.from_yaml('/etc/dd-agent/conf.d/lxd.yaml')
     containers = check.get_containers()
     if containers:
         for container in containers:
+            check.get_container_statistics(container)
             check.send_processes_statistics(container)
