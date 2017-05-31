@@ -1,5 +1,5 @@
 init_config:
-    min_collection_interval: 300
+    min_collection_interval: 30
 
 instances:
-    - tags: ['custom:lxd']
+    - excluded_ifaces: ['lo']
