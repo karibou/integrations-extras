@@ -1,1 +1,10 @@
 metric_name,metric_type,interval,unit_name,per_unit_name,description,orientation,integration,short_name
+lxd.container.memory.swap_usage,gauge,,byte,,The amount of swap space used on the system.,0,lxd,swap usage
+lxd.container.memory.swap_usage_peak,gauge,,byte,,The maximum amount of swap space used on the system.,0,lxd,peak swap usage
+lxd.container.memory.memory_usage,gauge,,byte,,The amount of memory used on the system.,0,lxd,memory usage
+lxd.container.memory.memory_usage_peak,gauge,,byte,,The maximum amount of memory used on the system.,0,lxd,peak memory usage
+lxd.container.net.bytes_rcvd,gauge,,byte,second,The number of bytes received on a device per second.,0,lxd,bytes recv
+lxd.container.net.bytes_sent,gauge,,byte,second,The number of bytes sent on a device per second.,0,lxd,bytes recv
+lxd.container.net.packets_in,gauge,,byte,second,The number of packets received on a device per second.,0,lxd,packets in
+lxd.containter.net.packets_out,gauge,,byte,second,The number of packets sent on a device per second.,0,lxd,packets out
+lxd.container.processes,gauge,,processes,,The number of running processes on a system.,0,lxd,processes
