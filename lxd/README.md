@@ -2,10 +2,9 @@
 
 ## Overview
 
-Get metrics from lxd service in real time to:
+Get metrics from lxd containers in real time to:
 
 * Visualize and monitor lxd states
-* Be notified about lxd failovers and events.
 
 ## Installation
 
@@ -13,7 +12,14 @@ Install the `dd-check-lxd` package manually or with your favorite configuration 
 
 ## Configuration
 
-Edit the `lxd.yaml` file to point to your server and port, set the masters to monitor
+The dd-agent account needs to be included in the lxd group to gain access to the
+LXD API.
+
+!!! WARNING !!!
+THIS IS A MAJOR SECURITY ISSUE AS THE DD-AGENT WILL GAIN FULL R/W ACCESS TO THE
+API, HENCE BE ABLE TO CREATE/DELETE/SHUTDOWN ANY CONTAINER. THIS IS FOR PROOF OF
+CONCEPT ONLY
+!!!
 
 ## Validation
 
@@ -29,4 +35,4 @@ When you run `datadog-agent info` you should see something like the following:
 
 ## Compatibility
 
-The lxd check is compatible with all major platforms
+The lxd check is compatible with ubuntu Xenial and later.
