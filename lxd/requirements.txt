@@ -1,2 +1,2 @@
 # integration pip requirements
-pylxd == 2.3.0
+pylxd == 2.2.3
